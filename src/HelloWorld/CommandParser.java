@@ -80,7 +80,7 @@ public class CommandParser {
 
             System.out.println("Hospedagens:");
             for (Hospedagem h : pacote.getHospedagens()) {
-                System.out.printf("Preço da hospedagem: %.2f\n", h.getPrice());
+                System.out.printf("Preço da hospedagem: %s\n", h.getPrice());
             }
 
             System.out.println("------------------------------------------");
@@ -88,7 +88,7 @@ public class CommandParser {
             System.out.println("Passagens de ida:");
 
             for (Passagem p : pacote.getPassagens().get("Ida")) {
-                System.out.printf("Preco da passagem: %.2f\n", p.getPrice());
+                System.out.printf("Preco da passagem: %s\n", p.getPrice());
             }
 
             if (!cp.isOneWay()) {
@@ -96,7 +96,7 @@ public class CommandParser {
                 System.out.println("Passagens de volta:");
 
                 for (Passagem p : pacote.getPassagens().get("Volta")) {
-                    System.out.printf("Preco da passagem: %.2f\n", p.getPrice());
+                    System.out.printf("Preco da passagem: %s\n", p.getPrice());
                 }
             }
 
@@ -151,7 +151,7 @@ public class CommandParser {
             }
 
             for (Hospedagem h : availableLodgings) {
-                System.out.printf("Preco da diaria: %.2f\n", h.getPrice());
+                System.out.printf("Preco da diaria: %s\n", h.getPrice());
             }
 
         } catch (RemoteException ex) {
@@ -213,7 +213,7 @@ public class CommandParser {
             System.out.println("Passagens de ida:");
 
             for (Passagem p : availableTickets.get("Ida")) {
-                System.out.printf("Preco da passagem: %.2f\n", p.getPrice());
+                System.out.printf("Preco da passagem: %s\n", p.getPrice());
             }
 
             if (!consultaPassagem.isOneWay()) {
@@ -221,7 +221,7 @@ public class CommandParser {
                 System.out.println("Passagens de volta:");
 
                 for (Passagem p : availableTickets.get("Volta")) {
-                    System.out.printf("Preco da passagem: %.2f\n", p.getPrice());
+                    System.out.printf("Preco da passagem: %s\n", p.getPrice());
                 }
             }
 

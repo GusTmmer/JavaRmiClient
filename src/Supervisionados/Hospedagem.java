@@ -16,7 +16,7 @@ import java.util.Map;
 public class Hospedagem {
 
     public String location;
-    public float price;
+    public String price;
     
     // Day representation number and capacity at that day.
     public Map <Integer, Integer> availableDates;
@@ -25,7 +25,7 @@ public class Hospedagem {
         return location;
     }
     
-    public float getPrice() {
+    public String getPrice() {
         return price;
     }
 
@@ -33,7 +33,7 @@ public class Hospedagem {
         return availableDates;
     }
     
-    public Hospedagem(String location, Map<Integer, Integer> availableDates, float price) {
+    public Hospedagem(String location, Map<Integer, Integer> availableDates, String price) {
         this.location = location;
         this.availableDates = availableDates;
         this.price = price;

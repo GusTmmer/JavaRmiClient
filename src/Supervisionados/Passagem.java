@@ -17,9 +17,9 @@ public class Passagem {
     private String destination;
     private int date;
     private int nSpotsLeft;
-    private float price;
+    private String price;
 
-    public Passagem(String origin, String destination, int date, int n_spots_left, float price) {
+    public Passagem(String origin, String destination, int date, int n_spots_left, String price) {
 
         this.origin = origin;
         this.destination = destination;
@@ -75,7 +75,7 @@ public class Passagem {
         return nSpotsLeft;
     }
     
-    public float getPrice() {
+    public String getPrice() {
         return price;
     }
 }
