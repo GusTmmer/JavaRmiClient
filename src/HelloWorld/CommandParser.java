@@ -181,20 +181,41 @@ public class CommandParser {
 
         System.out.print("Número de pessoas: ");
         String nPeople = scanner.nextLine();
+        
+        System.out.print("Preço da passagem: ");
+        String price = scanner.nextLine();
 
 
         Date goingDateObj = new Date(goingDate);
-        Date returnDateObj = new Date(returnDate);
+        Date returnDateObj = null;
+        
+        if (!isOneWay)
+            returnDateObj = new Date(returnDate);
+        
+        ConsultaPassagem consultaPassagem = null;
 
-
-        ConsultaPassagem consultaPassagem = new ConsultaPassagem(
-                isOneWay,
-                origin,
-                destination,
-                goingDateObj.reprDay,
-                returnDateObj.reprDay,
-                Integer.parseInt(nPeople)
-        );
+        if (!isOneWay)
+            consultaPassagem = new ConsultaPassagem(
+                    isOneWay,
+                    origin,
+                    destination,
+                    goingDateObj.reprDay,
+                    returnDateObj.reprDay,
+                    Integer.parseInt(nPeople),
+                    price
+            );
+        
+        else
+            consultaPassagem = new ConsultaPassagem(
+                    isOneWay,
+                    origin,
+                    destination,
+                    goingDateObj.reprDay,
+                    0,
+                    Integer.parseInt(nPeople),
+                    price
+            );
+            
 
         return consultaPassagem;
     }

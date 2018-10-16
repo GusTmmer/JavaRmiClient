@@ -5,17 +5,22 @@
  */
 package Consultas;
 
+import Events.HospedagemEvent;
+import Supervisionados.Hospedagem;
+import java.io.Serializable;
+
 /**
  *
  * @author a1729756
  */
-public class ConsultaHospedagem {
+public class ConsultaHospedagem implements Serializable {
 
     private String location;
     private int entryDate;
     private int leaveDate;
     private int nRooms;
     private int nPeople;
+    private String price = "";
 
     public ConsultaHospedagem(String location, int entryDate, int leaveDate, int nRooms, int nPeople) {
         this.location = location;
@@ -23,6 +28,14 @@ public class ConsultaHospedagem {
         this.leaveDate = leaveDate;
         this.nRooms = nRooms;
         this.nPeople = nPeople;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getPrice() {
+        return price;
     }
 
     public String getLocation() {

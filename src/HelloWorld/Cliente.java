@@ -5,9 +5,12 @@
  */
 package HelloWorld;
 
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,17 +24,21 @@ public class Cliente {
         
         try {
             Registry referenciaServicoNomes = LocateRegistry.getRegistry(2000);
-            
             CliImpl cliImpl = new CliImpl(referenciaServicoNomes);
             
-            cliImpl.invoke("SUP YO!");
+            InterfaceServ s;
+            s = (InterfaceServ) referenciaServicoNomes.lookup("Trivago");
             
-            cliImpl.invoke("OMG it works");
+            Scanner scanner = new Scanner(System.in);
+            CommandParser parser = new CommandParser(s, scanner);
             
-            cliImpl.invoke("OK bye.");
+            while(true)
+            {
+                parser.parseCommand(scanner.nextLine());
+                
+            }            
             
-            
-        } catch (RemoteException ex) {
+        } catch (RemoteException | NotBoundException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
         

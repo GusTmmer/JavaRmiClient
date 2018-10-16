@@ -5,11 +5,13 @@
  */
 package Consultas;
 
+import java.io.Serializable;
+
 /**
  *
  * @author a1729756
  */
-public class ConsultaPassagem {
+public class ConsultaPassagem implements Serializable {
 
     private boolean isOneWay;
     private String origin;
@@ -17,14 +19,24 @@ public class ConsultaPassagem {
     private int goingDate;
     private int returnDate;
     private int nPeople;
+    private String price = "";
 
-    public ConsultaPassagem(boolean isOneWay, String origin, String destination, int goingDate, int returnDate, int nPeople) {
+    public ConsultaPassagem(boolean isOneWay, String origin, String destination, int goingDate, int returnDate, int nPeople, String price) {
         this.isOneWay = isOneWay;
         this.origin = origin;
         this.destination = destination;
         this.goingDate = goingDate;
         this.returnDate = returnDate;
         this.nPeople = nPeople;
+        this.price = price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getPrice() {
+        return price;
     }
 
     public boolean isOneWay() {
