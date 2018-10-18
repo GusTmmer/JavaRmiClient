@@ -29,7 +29,7 @@ public class CliImpl extends UnicastRemoteObject implements InterfaceCli {
     public void invoke(String str) {
         try {
             InterfaceServ remote;
-            remote = (InterfaceServ) this.refRegistry.lookup("Name");
+            remote = (InterfaceServ) this.refRegistry.lookup("Trivago");
            
             remote.registraInteresse(null, this);
             
