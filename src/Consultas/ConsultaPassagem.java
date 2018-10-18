@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Consultas;
 
 import java.io.Serializable;
 
 /**
- *
- * @author a1729756
+ * A class containing all the necessary information to make a plane ticket query in the server.
+ * Used by the client to communicate with the server.
  */
 public class ConsultaPassagem implements Serializable {
 
@@ -21,14 +16,13 @@ public class ConsultaPassagem implements Serializable {
     private int nPeople;
     private String price = "";
 
-    public ConsultaPassagem(boolean isOneWay, String origin, String destination, int goingDate, int returnDate, int nPeople, String price) {
+    public ConsultaPassagem(boolean isOneWay, String origin, String destination, int goingDate, int returnDate, int nPeople) {
         this.isOneWay = isOneWay;
         this.origin = origin;
         this.destination = destination;
         this.goingDate = goingDate;
         this.returnDate = returnDate;
         this.nPeople = nPeople;
-        this.price = price;
     }
 
     public void setPrice(String price) {

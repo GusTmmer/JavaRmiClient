@@ -3,10 +3,14 @@ package Consultas;
 import Supervisionados.Hospedagem;
 import Supervisionados.Passagem;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class ConsultaPacoteResponse {
+/**
+ * A specialized class used by the server to reply to a client that queried a travel package request.
+ */
+public class ConsultaPacoteResponse implements Serializable {
 
     private List<Hospedagem> hospedagens;
     private Map<String, List<Passagem>> passagens;

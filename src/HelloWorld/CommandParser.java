@@ -1,11 +1,10 @@
 package HelloWorld;
 
-import Consultas.ConsultaHospedagem;
-import Consultas.ConsultaPacoteResponse;
-import Consultas.ConsultaPassagem;
-import Consultas.Date;
+import ClientEvents.HospedagemEvent;
+import ClientEvents.PacoteEvent;
+import ClientEvents.PassagemEvent;
+import Consultas.*;
 import Supervisionados.Hospedagem;
-import Supervisionados.Pacote;
 import Supervisionados.Passagem;
 
 import java.rmi.RemoteException;
@@ -15,17 +14,28 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+/**
+ *  Responsible for processing command inputted by the client.
+ *  Sends various requests to the server.
+ */
 public class CommandParser {
 
     private Scanner scanner;
     private InterfaceServ server;
+    private CliImpl client;
 
-    CommandParser(InterfaceServ server, Scanner scanner) {
-        this.scanner = scanner;
+    CommandParser(CliImpl client, InterfaceServ server, Scanner scanner) {
         this.server = server;
+        this.client = client;
+        this.scanner = scanner;
     }
 
 
+    /** Parses commands inputted by the user, getting appropriate handler.
+     *
+     * @param command : A string containing the command inputted by the user.
+     */
     public void parseCommand(String command) {
 
         if (command.equalsIgnoreCase("consulta h")) {
@@ -46,7 +56,7 @@ public class CommandParser {
         } else if (command.equalsIgnoreCase("compra pc")) {
             novaCompraPacote();
 
-        } else if (command.equalsIgnoreCase("register event")) {
+        } else if (command.equalsIgnoreCase("registra evento")) {
             novoRegistroDeEvento();
 
         } else {
@@ -54,14 +64,211 @@ public class CommandParser {
         }
     }
 
+    /**
+     * Specifies a handler to build the appropriate event.
+     */
     private void novoRegistroDeEvento() {
 
+        System.out.println("Tipo de evento:\n1. Hospedagem.\n2. Passagem.\n3. Pacote.");
+        Integer eventOption = Integer.parseInt(scanner.nextLine());
+
+        if (eventOption == 1) {
+            registroEventoHospedagem();
+        } else if (eventOption == 2) {
+            registroEventoPassagem();
+        } else if (eventOption == 3) {
+            registroEventoPacote();
+        } else {
+            System.out.println("Opcao invalida.");
+        }
     }
 
+    /**
+     * Builds a structure specifying the details of the event.
+     * Then registers it at the server side.
+     */
+    private void registroEventoPacote() {
+
+        System.out.println("Detalhes da Passagem: ");
+
+        System.out.print("Origem: ");
+        String origin = scanner.nextLine();
+
+        System.out.print("Destino: ");
+        String destination = scanner.nextLine();
+
+        System.out.print("Data (DD/MM/AAAA): ");
+        String date = scanner.nextLine();
+
+        System.out.print("Número de pessoas: ");
+        int nPeople = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Preço da máximo da passagem: ");
+        float price = Float.parseFloat(scanner.nextLine());
+
+        Date goingDate = new Date(date);
+
+        PassagemEvent passagemEvent = new PassagemEvent(
+                origin,
+                destination,
+                goingDate.reprDay,
+                nPeople,
+                price
+        );
+
+        System.out.println("Detalhes da Hospedagem:");
+
+        System.out.print("Local: ");
+        String location = scanner.nextLine();
+
+        System.out.print("Dia de entrada (DD/MM/AAAA): ");
+        String entryDate = scanner.nextLine();
+
+        System.out.print("Dia de saída (DD/MM/AAAA): ");
+        String leaveDate = scanner.nextLine();
+
+        System.out.print("Número de quartos: ");
+        int nRooms = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Preço da máximo da hospedagem: ");
+        price = Float.parseFloat(scanner.nextLine());
+
+        HospedagemEvent hospedagemEvent = new HospedagemEvent(
+                location,
+                entryDate,
+                leaveDate,
+                nRooms,
+                price
+        );
+
+        PacoteEvent pacoteEvent = new PacoteEvent(hospedagemEvent, passagemEvent);
+
+        try {
+            server.registraInteresse(client, pacoteEvent);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Builds a structure specifying the details of the event.
+     * Then registers it at the server side.
+     */
+    private void registroEventoPassagem() {
+
+        System.out.println("Detalhes da Passagem: ");
+
+        System.out.print("Origem: ");
+        String origin = scanner.nextLine();
+
+        System.out.print("Destino: ");
+        String destination = scanner.nextLine();
+
+        System.out.print("Data (DD/MM/AAAA): ");
+        String date = scanner.nextLine();
+
+        System.out.print("Número de pessoas: ");
+        int nPeople = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Preço da máximo da passagem: ");
+        float price = Float.parseFloat(scanner.nextLine());
+
+        Date goingDate = new Date(date);
+
+        PassagemEvent passagemEvent = new PassagemEvent(
+                origin,
+                destination,
+                goingDate.reprDay,
+                nPeople,
+                price
+        );
+
+        try {
+            server.registraInteresse(client, passagemEvent);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Builds a structure specifying the details of the event.
+     * Then registers it at the server side.
+     */
+    private void registroEventoHospedagem() {
+
+        System.out.println("Detalhes da Hospedagem:");
+
+        System.out.print("Local: ");
+        String location = scanner.nextLine();
+
+        System.out.print("Dia de entrada (DD/MM/AAAA): ");
+        String entryDate = scanner.nextLine();
+
+        System.out.print("Dia de saída (DD/MM/AAAA): ");
+        String leaveDate = scanner.nextLine();
+
+        System.out.print("Número de quartos: ");
+        int nRooms = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Preço da máximo da hospedagem: ");
+        float price = Float.parseFloat(scanner.nextLine());
+
+        HospedagemEvent hospedagemEvent = new HospedagemEvent(
+                location,
+                entryDate,
+                leaveDate,
+                nRooms,
+                price
+        );
+
+        try {
+            server.registraInteresse(client, hospedagemEvent);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Builds a structure specifying the details of the package.
+     * Makes a requisition to the server to buy the product.
+     */
     private void novaCompraPacote() {
 
+        System.out.println("Detalhes da Hospedagem:");
+        ConsultaHospedagem ch = novaConsultaHospedagem();
+
+        System.out.print("Preço da hospedagem: ");
+        String price = scanner.nextLine();
+
+        ch.setPrice(price);
+
+        System.out.println("Detalhes da Passagem: ");
+        ConsultaPassagem cp = novaConsultaPassagem();
+
+        System.out.print("Preço da passagem: ");
+        price = scanner.nextLine();
+
+        cp.setPrice(price);
+
+        try {
+            CompraPacoteResponse pacote = server.compraPacote(cp, ch);
+
+            if (pacote == null) {
+                System.out.println("Nao foi possivel realizar a compra.");
+                return;
+            }
+
+            System.out.println("Compra realizada com sucesso.");
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * Builds a structure specifying the details of the package.
+     * Makes a requisition to the server and gets a query response.
+     */
     private void novaConsultaPacote() {
 
         System.out.println("Detalhes da Hospedagem:");
@@ -105,14 +312,67 @@ public class CommandParser {
         }
     }
 
+    /**
+     * Builds a structure specifying the details of the plane ticket.
+     * Makes a requisition to the server to buy the product.
+     */
     private void novaCompraPassagem() {
 
+        ConsultaPassagem consultaPassagem = novaConsultaPassagem();
+
+        System.out.print("Preço da passagem: ");
+        String price = scanner.nextLine();
+
+        consultaPassagem.setPrice(price);
+
+        try {
+
+            Map<String, Passagem> tickets = server.compraPassagem(consultaPassagem);
+
+            if (tickets == null) {
+                System.out.println("Nao foi possivel realizar a compra.");
+                return;
+            }
+
+            System.out.println("Compra realizada com sucesso.");
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * Builds a structure specifying the details of the lodging.
+     * Makes a requisition to the server to buy the product.
+     */
     private void novaCompraHospedagem() {
 
+        ConsultaHospedagem consultaHospedagem = novaConsultaHospedagem();
+
+        System.out.print("Preço da hospedagem: ");
+        String price = scanner.nextLine();
+
+        consultaHospedagem.setPrice(price);
+
+        try {
+            Hospedagem hospedagem = server.compraHospedagem(consultaHospedagem);
+
+            if (hospedagem == null) {
+                System.out.println("Nao foi possivel realizar a compra.");
+                return;
+            }
+
+            System.out.println("Compra realizada com sucesso.");
+
+        } catch (RemoteException ex) {
+            Logger.getLogger(CommandParser.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
+    /**
+     * Builds a structure specifying the details of the lodging.
+     * Makes a requisition to the server and gets a query response.
+     */
     private ConsultaHospedagem novaConsultaHospedagem() {
 
         System.out.print("Local: ");
@@ -140,6 +400,10 @@ public class CommandParser {
         return consultaHospedagem;
     }
 
+    /**
+     * Processes the lodging query result generated by the server.
+     * Outputs details to the terminal.
+     */
     private void handleConsultaHospedagem(ConsultaHospedagem consultaHospedagem) {
 
         try {
@@ -159,6 +423,10 @@ public class CommandParser {
         }
     }
 
+    /**
+     * Builds a structure specifying the details of the plane ticket.
+     * Makes a requisition to the server and gets a query response.
+     */
     private ConsultaPassagem novaConsultaPassagem() {
 
         System.out.println("Passagem só de ida (y/n)?  ");
@@ -181,45 +449,42 @@ public class CommandParser {
 
         System.out.print("Número de pessoas: ");
         String nPeople = scanner.nextLine();
-        
-        System.out.print("Preço da passagem: ");
-        String price = scanner.nextLine();
-
 
         Date goingDateObj = new Date(goingDate);
         Date returnDateObj = null;
         
         if (!isOneWay)
             returnDateObj = new Date(returnDate);
-        
-        ConsultaPassagem consultaPassagem = null;
 
-        if (!isOneWay)
+        ConsultaPassagem consultaPassagem;
+
+        if (!isOneWay) {
             consultaPassagem = new ConsultaPassagem(
                     isOneWay,
                     origin,
                     destination,
                     goingDateObj.reprDay,
                     returnDateObj.reprDay,
-                    Integer.parseInt(nPeople),
-                    price
+                    Integer.parseInt(nPeople)
             );
-        
-        else
+        } else {
             consultaPassagem = new ConsultaPassagem(
                     isOneWay,
                     origin,
                     destination,
                     goingDateObj.reprDay,
                     0,
-                    Integer.parseInt(nPeople),
-                    price
+                    Integer.parseInt(nPeople)
             );
-            
+        }
 
         return consultaPassagem;
     }
 
+    /**
+     * Processes the plane tickets query result generated by the server.
+     * Outputs details to the terminal.
+     */
     private void handleConsultaPassagem(ConsultaPassagem consultaPassagem) {
 
         try {

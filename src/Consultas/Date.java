@@ -1,13 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Consultas;
 
 /**
  *
- * @author a1729756
+ * A class responsible for processing user inputted dates and returning easy to process data types.
  */
 public class Date {
         
@@ -27,6 +22,10 @@ public class Date {
         reprDay = day + month * daysInMonths[month - 1] + year * 365;
     }
 
+    /**
+     *
+     * @param date : A string containing the date in the format DD/MM/YYYY
+     */
     public Date(String date) {
 
         String[] dateParts = date.split("/");
