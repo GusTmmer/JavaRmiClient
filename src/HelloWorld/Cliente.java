@@ -1,37 +1,35 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package HelloWorld;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  *
- * @author a1729756
+ * The Main class. Creates an instance of client, gets input from the user and makes requests to the server.
  */
 public class Cliente {
     
     public static void main (String[] args) {
         
         try {
-            Registry referenciaServicoNomes = LocateRegistry.getRegistry(2000);
+            Registry nameService = LocateRegistry.getRegistry(2000);
+
+            InterfaceServ server = (InterfaceServ) nameService.lookup("Trivago");
+
+            Scanner scanner = new Scanner(System.in);
+            CliImpl client = new CliImpl(server, scanner);
             
-            CliImpl cliImpl = new CliImpl(referenciaServicoNomes);
+            while(true) {
+                client.commandParser.parseCommand(scanner.nextLine());
+            }
+
             
-            cliImpl.invoke("SUP YO!");
-            
-            cliImpl.invoke("OMG it works");
-            
-            cliImpl.invoke("OK bye.");
-            
-            
-        } catch (RemoteException ex) {
+        } catch (RemoteException | NotBoundException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
         
