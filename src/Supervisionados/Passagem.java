@@ -2,11 +2,13 @@ package Supervisionados;
 
 import Consultas.ConsultaPassagem;
 
+import java.io.Serializable;
+
 /**
  *
  * A class used to represent a plane ticket in the server.
  */
-public class Passagem {
+public class Passagem implements Serializable {
 
     private String origin;
     private String destination;

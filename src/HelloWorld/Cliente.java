@@ -23,7 +23,21 @@ public class Cliente {
 
             Scanner scanner = new Scanner(System.in);
             CliImpl client = new CliImpl(server, scanner);
-            
+
+            System.out.println("Comandos disponíveis:\nConsultas:\n" +
+                            "\tconsulta h (hospedagem)\n" +
+                            "\tconsulta p (passagem)\n" +
+                            "\tconsulta pc (pacote)\n" +
+                            "Compras:\n" +
+                            "\tcompra h (hospedagem)\n" +
+                            "\tcompra p (passagem)\n" +
+                            "\tcompra pc (pacote)\n" +
+                            "Eventos:\n" +
+                            "\tregistra evento\n" +
+                            "\tremove evento\n"
+            );
+
+
             while(true) {
                 client.commandParser.parseCommand(scanner.nextLine());
             }
@@ -32,7 +46,5 @@ public class Cliente {
         } catch (RemoteException | NotBoundException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
-    
 }

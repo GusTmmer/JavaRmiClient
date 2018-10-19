@@ -25,6 +25,20 @@ public class CommandParser {
     private InterfaceServ server;
     private CliImpl client;
 
+    private ConsultaPassagem prevConsultaPassagem = null;
+    private ConsultaHospedagem prevConsultaHospedagem = null;
+    private ConsultaPacote prevConsultaPacote = null;
+
+    private class ConsultaPacote {
+        ConsultaPassagem consultaPassagem;
+        ConsultaHospedagem consultaHospedagem;
+
+        public ConsultaPacote(ConsultaPassagem consultaPassagem, ConsultaHospedagem consultaHospedagem) {
+            this.consultaPassagem = consultaPassagem;
+            this.consultaHospedagem = consultaHospedagem;
+        }
+    }
+
     CommandParser(CliImpl client, InterfaceServ server, Scanner scanner) {
         this.server = server;
         this.client = client;
@@ -58,10 +72,178 @@ public class CommandParser {
 
         } else if (command.equalsIgnoreCase("registra evento")) {
             novoRegistroDeEvento();
+        } else if (command.equalsIgnoreCase("remove evento")) {
+            removeRegistroDeEvento();
 
         } else {
             System.out.println("Not supported.");
         }
+    }
+
+    /**
+     * Specifies a handler to build the appropriate event removal request.
+     */
+    private void removeRegistroDeEvento() {
+
+        System.out.println("Tipo de evento:\n1. Hospedagem.\n2. Passagem.\n3. Pacote.");
+        Integer eventOption = Integer.parseInt(scanner.nextLine());
+
+        if (eventOption == 1) {
+            removeEventoHospedagem();
+        } else if (eventOption == 2) {
+            removeEventoPassagem();
+        } else if (eventOption == 3) {
+            removeEventoPacote();
+        } else {
+            System.out.println("Opcao invalida.");
+        }
+    }
+
+    /**
+     * Builds a structure specifying the details of the event.
+     * Then removes it at the server side.
+     */
+    private void removeEventoPacote() {
+
+        System.out.println("Detalhes da Passagem: ");
+
+        System.out.print("Origem: ");
+        String origin = scanner.nextLine();
+
+        System.out.print("Destino: ");
+        String destination = scanner.nextLine();
+
+        System.out.print("Data (DD/MM/AAAA): ");
+        String date = scanner.nextLine();
+
+        System.out.print("Número de pessoas: ");
+        int nPeople = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Preço máximo da passagem: ");
+        float price = Float.parseFloat(scanner.nextLine());
+
+        PassagemEvent passagemEvent = new PassagemEvent(
+                origin,
+                destination,
+                date,
+                nPeople,
+                price
+        );
+
+        System.out.println("Detalhes da Hospedagem:");
+
+        System.out.print("Local: ");
+        String location = scanner.nextLine();
+
+        System.out.print("Dia de entrada (DD/MM/AAAA): ");
+        String entryDate = scanner.nextLine();
+
+        System.out.print("Dia de saída (DD/MM/AAAA): ");
+        String leaveDate = scanner.nextLine();
+
+        System.out.print("Número de quartos: ");
+        int nRooms = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Preço máximo da hospedagem: ");
+        price = Float.parseFloat(scanner.nextLine());
+
+        HospedagemEvent hospedagemEvent = new HospedagemEvent(
+                location,
+                entryDate,
+                leaveDate,
+                nRooms,
+                price
+        );
+
+        PacoteEvent pacoteEvent = new PacoteEvent(hospedagemEvent, passagemEvent);
+
+        try {
+            server.removeInteresse(client, pacoteEvent);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Evento removido.");
+    }
+
+    /**
+     * Builds a structure specifying the details of the event.
+     * Then removes it at the server side.
+     */
+    private void removeEventoPassagem() {
+
+        System.out.println("Detalhes da Passagem: ");
+
+        System.out.print("Origem: ");
+        String origin = scanner.nextLine();
+
+        System.out.print("Destino: ");
+        String destination = scanner.nextLine();
+
+        System.out.print("Data (DD/MM/AAAA): ");
+        String date = scanner.nextLine();
+
+        System.out.print("Número de pessoas: ");
+        int nPeople = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Preço máximo da passagem: ");
+        float price = Float.parseFloat(scanner.nextLine());
+
+        PassagemEvent passagemEvent = new PassagemEvent(
+                origin,
+                destination,
+                date,
+                nPeople,
+                price
+        );
+
+        try {
+            server.removeInteresse(client, passagemEvent);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Evento removido.");
+    }
+
+    /**
+     * Builds a structure specifying the details of the event.
+     * Then removes it at the server side.
+     */
+    private void removeEventoHospedagem() {
+
+        System.out.println("Detalhes da Hospedagem:");
+
+        System.out.print("Local: ");
+        String location = scanner.nextLine();
+
+        System.out.print("Dia de entrada (DD/MM/AAAA): ");
+        String entryDate = scanner.nextLine();
+
+        System.out.print("Dia de saída (DD/MM/AAAA): ");
+        String leaveDate = scanner.nextLine();
+
+        System.out.print("Número de quartos: ");
+        int nRooms = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Preço máximo da hospedagem: ");
+        float price = Float.parseFloat(scanner.nextLine());
+
+        HospedagemEvent hospedagemEvent = new HospedagemEvent(
+                location,
+                entryDate,
+                leaveDate,
+                nRooms,
+                price
+        );
+
+        try {
+            server.removeInteresse(client, hospedagemEvent);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Evento removido.");
     }
 
     /**
@@ -103,15 +285,13 @@ public class CommandParser {
         System.out.print("Número de pessoas: ");
         int nPeople = Integer.parseInt(scanner.nextLine());
 
-        System.out.print("Preço da máximo da passagem: ");
+        System.out.print("Preço máximo da passagem: ");
         float price = Float.parseFloat(scanner.nextLine());
-
-        Date goingDate = new Date(date);
 
         PassagemEvent passagemEvent = new PassagemEvent(
                 origin,
                 destination,
-                goingDate.reprDay,
+                date,
                 nPeople,
                 price
         );
@@ -130,7 +310,7 @@ public class CommandParser {
         System.out.print("Número de quartos: ");
         int nRooms = Integer.parseInt(scanner.nextLine());
 
-        System.out.print("Preço da máximo da hospedagem: ");
+        System.out.print("Preço máximo da hospedagem: ");
         price = Float.parseFloat(scanner.nextLine());
 
         HospedagemEvent hospedagemEvent = new HospedagemEvent(
@@ -148,6 +328,8 @@ public class CommandParser {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Evento registrado.");
     }
 
     /**
@@ -173,12 +355,10 @@ public class CommandParser {
         System.out.print("Preço da máximo da passagem: ");
         float price = Float.parseFloat(scanner.nextLine());
 
-        Date goingDate = new Date(date);
-
         PassagemEvent passagemEvent = new PassagemEvent(
                 origin,
                 destination,
-                goingDate.reprDay,
+                date,
                 nPeople,
                 price
         );
@@ -188,6 +368,8 @@ public class CommandParser {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Evento registrado.");
     }
 
     /**
@@ -210,7 +392,7 @@ public class CommandParser {
         System.out.print("Número de quartos: ");
         int nRooms = Integer.parseInt(scanner.nextLine());
 
-        System.out.print("Preço da máximo da hospedagem: ");
+        System.out.print("Preço máximo da hospedagem: ");
         float price = Float.parseFloat(scanner.nextLine());
 
         HospedagemEvent hospedagemEvent = new HospedagemEvent(
@@ -226,6 +408,8 @@ public class CommandParser {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Evento registrado.");
     }
 
     /**
@@ -271,11 +455,27 @@ public class CommandParser {
      */
     private void novaConsultaPacote() {
 
-        System.out.println("Detalhes da Hospedagem:");
-        ConsultaHospedagem ch = novaConsultaHospedagem();
+        ConsultaHospedagem ch = null;
+        ConsultaPassagem cp = null;
 
-        System.out.println("Detalhes da Passagem: ");
-        ConsultaPassagem cp = novaConsultaPassagem();
+        if (prevConsultaPacote != null) {
+            System.out.print("Repetir ultima consulta (y/n)? ");
+            if (scanner.nextLine().startsWith("y")) {
+                ch = prevConsultaPacote.consultaHospedagem;
+                cp = prevConsultaPacote.consultaPassagem;
+            }
+        }
+
+        if (ch == null && cp == null) {
+            System.out.println("Detalhes da Hospedagem:");
+            ch = novaConsultaHospedagem();
+
+            System.out.println("Detalhes da Passagem: ");
+            cp = novaConsultaPassagem();
+        }
+
+        if (ch == null || cp == null)
+            return;
 
         try {
             ConsultaPacoteResponse pacote = server.consultaPacote(cp, ch);
@@ -286,8 +486,19 @@ public class CommandParser {
             }
 
             System.out.println("Hospedagens:");
+
             for (Hospedagem h : pacote.getHospedagens()) {
-                System.out.printf("Preço da hospedagem: %s\n", h.getPrice());
+                int entryDate = ch.getEntryDate();
+                int leaveDate = ch.getLeaveDate();
+                int minimumSpots = h.availableDates.get(entryDate);
+
+                for (int date = entryDate + 1; date <= leaveDate; date++) {
+                    int spotsOnDate = h.availableDates.get(date);
+                    if (spotsOnDate < minimumSpots)
+                        minimumSpots = spotsOnDate;
+                }
+
+                System.out.printf("Preco da diaria: %s\nDisponiveis: %d\n", h.getPrice(), minimumSpots);
             }
 
             System.out.println("------------------------------------------");
@@ -295,7 +506,7 @@ public class CommandParser {
             System.out.println("Passagens de ida:");
 
             for (Passagem p : pacote.getPassagens().get("Ida")) {
-                System.out.printf("Preco da passagem: %s\n", p.getPrice());
+                System.out.printf("Preco da passagem: %s\nDisponiveis: %d\n", p.getPrice(), p.getAvailableSpots());
             }
 
             if (!cp.isOneWay()) {
@@ -303,7 +514,7 @@ public class CommandParser {
                 System.out.println("Passagens de volta:");
 
                 for (Passagem p : pacote.getPassagens().get("Volta")) {
-                    System.out.printf("Preco da passagem: %s\n", p.getPrice());
+                    System.out.printf("Preco da passagem: %s\nDisponiveis: %d\n", p.getPrice(), p.getAvailableSpots());
                 }
             }
 
@@ -375,6 +586,13 @@ public class CommandParser {
      */
     private ConsultaHospedagem novaConsultaHospedagem() {
 
+        if (prevConsultaHospedagem != null) {
+            System.out.print("Repetir ultima consulta (y/n)? ");
+            if (scanner.nextLine().startsWith("y")) {
+                return prevConsultaHospedagem;
+            }
+        }
+
         System.out.print("Local: ");
         String location = scanner.nextLine();
 
@@ -397,6 +615,8 @@ public class CommandParser {
                 location, entryDateObj.reprDay, leaveDateObj.reprDay, nRooms, nPeople
         );
 
+        prevConsultaHospedagem = consultaHospedagem;
+
         return consultaHospedagem;
     }
 
@@ -414,9 +634,23 @@ public class CommandParser {
                 return;
             }
 
+            System.out.println("Resultados encontrados:");
+
             for (Hospedagem h : availableLodgings) {
-                System.out.printf("Preco da diaria: %s\n", h.getPrice());
+                int entryDate = consultaHospedagem.getEntryDate();
+                int leaveDate = consultaHospedagem.getLeaveDate();
+                int minimumSpots = h.availableDates.get(entryDate);
+
+                for (int date = entryDate + 1; date <= leaveDate; date++) {
+                    int spotsOnDate = h.availableDates.get(date);
+                    if (spotsOnDate < minimumSpots)
+                        minimumSpots = spotsOnDate;
+                }
+
+                System.out.printf("Preco da diaria: %s\nDisponiveis: %d\n", h.getPrice(), minimumSpots);
             }
+
+
 
         } catch (RemoteException ex) {
             Logger.getLogger(CommandParser.class.getName()).log(Level.SEVERE, null, ex);
@@ -429,7 +663,14 @@ public class CommandParser {
      */
     private ConsultaPassagem novaConsultaPassagem() {
 
-        System.out.println("Passagem só de ida (y/n)?  ");
+        if (prevConsultaPassagem != null) {
+            System.out.print("Repetir ultima consulta (y/n)? ");
+            if (scanner.nextLine().startsWith("y")) {
+                return prevConsultaPassagem;
+            }
+        }
+
+        System.out.print("Passagem só de ida (y/n)? ");
         boolean isOneWay = scanner.nextLine().startsWith("y");
 
         System.out.print("Origem: ");
@@ -460,7 +701,7 @@ public class CommandParser {
 
         if (!isOneWay) {
             consultaPassagem = new ConsultaPassagem(
-                    isOneWay,
+                    false,
                     origin,
                     destination,
                     goingDateObj.reprDay,
@@ -469,7 +710,7 @@ public class CommandParser {
             );
         } else {
             consultaPassagem = new ConsultaPassagem(
-                    isOneWay,
+                    true,
                     origin,
                     destination,
                     goingDateObj.reprDay,
@@ -477,6 +718,8 @@ public class CommandParser {
                     Integer.parseInt(nPeople)
             );
         }
+
+        prevConsultaPassagem = consultaPassagem;
 
         return consultaPassagem;
     }
@@ -496,10 +739,11 @@ public class CommandParser {
                 return;
             }
 
+            System.out.println("Passagens encontradas:");
             System.out.println("Passagens de ida:");
 
             for (Passagem p : availableTickets.get("Ida")) {
-                System.out.printf("Preco da passagem: %s\n", p.getPrice());
+                System.out.printf("Preco da passagem: %s\nDisponiveis: %d\n", p.getPrice(), p.getAvailableSpots());
             }
 
             if (!consultaPassagem.isOneWay()) {
@@ -507,7 +751,7 @@ public class CommandParser {
                 System.out.println("Passagens de volta:");
 
                 for (Passagem p : availableTickets.get("Volta")) {
-                    System.out.printf("Preco da passagem: %s\n", p.getPrice());
+                    System.out.printf("Preco da passagem: %s\nDisponiveis: %d\n", p.getPrice(), p.getAvailableSpots());
                 }
             }
 
