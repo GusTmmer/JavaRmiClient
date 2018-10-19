@@ -1,10 +1,12 @@
 package ClientEvents;
 
+import java.io.Serializable;
+
 /**
  * A class containing all the necessary information to make a travel package event registry in the server.
  * Used by the client to communicate with the server.
  */
-public class PacoteEvent implements IEvent {
+public class PacoteEvent implements IEvent, Serializable {
     
     private final HospedagemEvent hospedagemEvent;
     private final PassagemEvent passagemEvent;

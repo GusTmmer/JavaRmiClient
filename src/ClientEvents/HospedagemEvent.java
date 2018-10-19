@@ -1,12 +1,13 @@
 package ClientEvents;
 
 import Consultas.Date;
+import java.io.Serializable;
 
 /**
  * A class containing all the necessary information to make a lodging event registry in the server.
  * Used by the client to communicate with the server.
  */
-public class HospedagemEvent implements IEvent {
+public class HospedagemEvent implements IEvent, Serializable {
     
     private final String location;
     private final String entryDate;

@@ -1,10 +1,13 @@
 package ClientEvents;
 
+import static Consultas.Date.daysInMonths;
+import java.io.Serializable;
+
 /**
  * A class containing all the necessary information to make a plane ticket event registry in the server.
  * Used by the client to communicate with the server.
  */
-public class PassagemEvent implements IEvent {
+public class PassagemEvent implements IEvent, Serializable {
     
     private String origin;
     private String destination;
@@ -58,5 +61,19 @@ public class PassagemEvent implements IEvent {
 
     public float getMaxPrice() {
         return maxPrice;
+    }
+
+    public String getDateAsString() {        
+        int year = date/365;
+        int rest = date%365;
+        int i=0;
+        while(rest >= 0) {
+            rest -= daysInMonths[i];
+            i++;
+        }
+        int month = i-1;
+        int day = rest+daysInMonths[i];
+        
+        return (String.valueOf(day) + "/" + String.valueOf(month) + "/" + String.valueOf(year));
     }
 }

@@ -1,10 +1,12 @@
 package Supervisionados;
 
+import java.io.Serializable;
+
 /**
  *
  * A class used to represent a travel package in the server.
  */
-public class Pacote {
+public class Pacote implements Serializable{
     
     public Hospedagem hospedagem;
     public Passagem passagem;

@@ -29,6 +29,19 @@ public class CommandParser {
         this.server = server;
         this.client = client;
         this.scanner = scanner;
+        
+        System.out.println("****************************************************");
+        System.out.println("Comandos disponíveis: ");
+        System.out.println("consulta h: consulta hospedagens");
+        System.out.println("consulta p: consulta passagens");
+        System.out.println("consulta pc: consulta pacotes");
+        System.out.println("");
+        System.out.println("compra h: compra uma hospedagem");
+        System.out.println("compra p: compra uma passagem");
+        System.out.println("compra pc: compra um pacote");
+        System.out.println("");
+        System.out.println("registra evento: registra interesse em um evento");
+        System.out.println("****************************************************");
     }
 
 
@@ -413,6 +426,8 @@ public class CommandParser {
                 System.out.println("Nao foram encontradas hospedagens com os critérios estabelecidos.");
                 return;
             }
+            
+            System.out.println("Foram encontradas hospedagens com preços:");
 
             for (Hospedagem h : availableLodgings) {
                 System.out.printf("Preco da diaria: %s\n", h.getPrice());
