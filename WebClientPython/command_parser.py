@@ -1,8 +1,20 @@
 from query_date import QueryDate
 from consultas import ConsultaHospedagem, ConsultaPassagem
+from server_objects import Hospedagem, Passagem
+import requests
 
 
 class CommandParser:
+
+    prev_consulta_hospedagem = None
+    prev_consulta_passagem = None
+    prev_consulta_pacote = None
+
+    headers = {
+        'content-type': 'application/json'
+    }
+
+    server_url = 'http://localhost:8080/service/'
 
     def parse_command(self, command):
         if command.lower() == 'consulta h':
@@ -25,7 +37,118 @@ class CommandParser:
 
         else:
             print('Comando nao suportado')
-    
+
+    def nova_compra_hospedagem(self):
+
+        consulta_hospedagem = self.nova_consulta_hospedagem()
+
+        price = input('Preco da hospedagem: ')
+        consulta_hospedagem.price = price
+
+        # TODO Finish request.
+        response = requests.get(
+            self.server_url + 'compra/hospedagem',
+            headers=self.headers
+        )
+
+        if not self.verify_response(response):
+            return
+
+        try:
+            hospedagem = response.json()
+        except ValueError:
+            print('Nao foi possivel realizar a compra')
+            return
+
+        print('Compra realizada com sucesso.')
+
+    def nova_compra_passagem(self):
+
+        consulta_passagem = self.nova_consulta_passagem()
+
+        price = input('Preco da passagem: ')
+        consulta_passagem.price = price
+
+        # TODO Finish request.
+        response = requests.get(
+            self.server_url + 'compra/passagem',
+            headers=self.headers
+        )
+
+        if not self.verify_response(response):
+            return
+
+        try:
+            passagem = response.json()
+        except ValueError:
+            print('Nao foi possivel realizar a compra')
+            return
+
+        print('Compra realizada com sucesso.')
+
+    def nova_compra_pacote(self):
+
+        print('Detalhes da Hospedagem:')
+        consulta_hospedagem = self.nova_consulta_hospedagem()
+
+        price = input('Preco da hospedagem: ')
+        consulta_hospedagem.price = price
+
+        print('Detalhes da Passagem:')
+        consulta_passagem = self.nova_consulta_passagem()
+
+        price = input('Preco da passagem: ')
+        consulta_passagem.price = price
+
+        # TODO Finish request.
+        response = requests.get(
+            self.server_url + 'compra/pacote',
+            headers=self.headers
+        )
+
+        if not self.verify_response(response):
+            return
+
+        try:
+            hospedagem = response.json()
+        except ValueError:
+            print('Nao foi possivel realizar a compra')
+            return
+
+        print('Compra realizada com sucesso.')
+
+    def handle_consulta_hospedagem(self, consulta_hospedagem):
+
+        # TODO Finish request.
+        response = requests.get(
+            self.server_url + 'consulta/hospedagem',
+            headers=self.headers
+        )
+
+        if not self.verify_response(response):
+            return
+
+        try:
+            hospedagens = response.json()
+        except ValueError:
+            print('Nao foram encontradas hospedagens com os critérios estabelecidos.')
+            return
+
+        print('Resultados encontrados:')
+
+        for h in hospedagens:
+            h = Hospedagem.from_server_json(h)
+            entry_date = consulta_hospedagem.entry_date
+            leave_date = consulta_hospedagem.leave_date
+            min_spots = h.available_dates[entry_date]
+
+            for date in range(entry_date + 1, leave_date + 1):
+                spots_on_date = h.available_dates[date]
+                if spots_on_date < min_spots:
+                    min_spots = spots_on_date
+
+            print('Preco da diaria: {}\nDisponiveis: {}\n'.format(h.price, min_spots))
+
     def nova_consulta_hospedagem(self):
         
         if self.prev_consulta_hospedagem is not None:
@@ -33,20 +156,54 @@ class CommandParser:
             if repetir_consulta.startswith('y'):
                 return self.prev_consulta_hospedagem
 
-        location = input("Local: ")
-        entry_date = input("Dia de entrada (DD/MM/AAAA): ")
-        leave_date = input("Dia de saída (DD/MM/AAAA): ")
-        n_rooms = int(input("Número de quartos: "))
-        n_people = int(input("Número de pessoas: "))
+        location = input('Local: ')
+        entry_date = input('Dia de entrada (DD/MM/AAAA): ')
+        leave_date = input('Dia de saída (DD/MM/AAAA): ')
+        n_rooms = int(input('Número de quartos: '))
+        n_people = int(input('Número de pessoas: '))
         
         entry_date = QueryDate(entry_date)
         leave_date = QueryDate(leave_date)
 
-        consulta_hospedagem = ConsultaHospedagem(location, entry_date.repr_day, leave_date.repr_day, n_rooms, n_people)
+        consulta_hospedagem = ConsultaHospedagem(
+            location, entry_date.repr_day, leave_date.repr_day, n_rooms, n_people
+        )
 
-        self.prev_consulta_hospedagem = consulta_hospedagem;
+        self.prev_consulta_hospedagem = consulta_hospedagem
 
-        return consulta_hospedagem;
+        return consulta_hospedagem
+
+    def handle_consulta_passagem(self, consulta_passagem):
+        # TODO Finish request.
+        response = requests.get(
+            self.server_url + 'consulta/passagem',
+            headers=self.headers
+        )
+
+        if not self.verify_response(response):
+            return
+
+        try:
+            passagens = response.json()
+        except ValueError:
+            print('Nao foram encontradas passagens com os critérios estabelecidos.')
+            return
+
+        print('Resultados encontrados:')
+
+        print('Passagens de ida:')
+
+        for p in passagens['Ida']:
+            p = Passagem.from_server_json(p)
+            print('Preco da passagem: {}\nDisponiveis: {}\n'.format(p.price, p.n_spots_left))
+
+        if not consulta_passagem.is_one_way:
+
+            print('Passagens de volta:')
+
+            for p in passagens['Volta']:
+                p = Passagem.from_server_json(p)
+                print('Preco da passagem: {}\nDisponiveis: {}\n'.format(p.price, p.n_spots_left))
 
     def nova_consulta_passagem(self):
 
@@ -55,33 +212,41 @@ class CommandParser:
             if repetir_consulta.startswith('y'):
                 return self.prev_consulta_passagem
 
-        is_one_way = input("Passagem só de ida (y/n)? ").startswith('y')
-        origin = input("Origem: ")
-        destination = input("Destino: ")
-        going_date = input("Data de ida (DD/MM/AAAA): ")
+        is_one_way = input('Passagem só de ida (y/n)? ').startswith('y')
+        origin = input('Origem: ')
+        destination = input('Destino: ')
+        going_date = input('Data de ida (DD/MM/AAAA): ')
         return_date = ''
 
         if not is_one_way:
-            return_date = input("Data de retorno (DD/MM/AAAA): ")
+            return_date = input('Data de retorno (DD/MM/AAAA): ')
 
-        n_people = int(input("Número de pessoas: "))
+        n_people = int(input('Número de pessoas: '))
 
-        going_date = QueryDate(going_date)
-        return_date = None
+        going_date_obj = QueryDate(going_date)
+        return_date_obj = None
         
         if not is_one_way:
-            return_date = QueryDate(return_date)
+            return_date_obj = QueryDate(return_date)
 
         if not is_one_way:
-            consulta_passagem = ConsultaPassagem(is_one_way, origin, destination, going_date.repr_day, return_date.repr_day, n_people)
+            consulta_passagem = ConsultaPassagem(
+                is_one_way,
+                origin, destination,
+                going_date_obj.repr_day, return_date_obj.repr_day,
+                n_people
+            )
         else:
-            consulta_passagem = ConsultaPassagem(is_one_way, origin, destination, going_date.repr_day, 0, n_people)
-
+            consulta_passagem = ConsultaPassagem(
+                is_one_way,
+                origin, destination,
+                going_date_obj.repr_day, 0,
+                n_people
+            )
 
         self.prev_consulta_passagem = consulta_passagem
 
         return consulta_passagem
-
 
     def nova_consulta_pacote(self):
 
@@ -95,66 +260,68 @@ class CommandParser:
                 consulta_passagem = self.prev_consulta_pacote.consulta_passagem
         
         if consulta_hospedagem is None and consulta_passagem is None:
-            print("Detalhes da Hospedagem:")
-            consulta_hospedagem = nova_consulta_hospedagem()
+            print('Detalhes da Hospedagem:')
+            consulta_hospedagem = self.nova_consulta_hospedagem()
 
-            print("Detalhes da Passagem: ")
-            consulta_passagem = nova_consulta_passagem()
+            print('Detalhes da Passagem: ')
+            consulta_passagem = self.nova_consulta_passagem()
 
         if consulta_hospedagem is None or consulta_passagem is None:
             return
-        
-        response = requests.get('http://localhost:' + port + '/service/consulta/pacote',
-                                headers=, json=
-                   )
 
-        if response.status_code != 200:
-            print('Servidor nao respondeu OK')
+        # TODO Finish request.
+        response = requests.get(
+            self.server_url + 'consulta/pacote',
+            headers=self.headers
+        )
+
+        if not self.verify_response(response):
             return
 
         try:
             response_json = response.json()
         except ValueError:
-            print("Nenhum pacote encontrado com os criterios estabelecidos.")
+            print('Nao foram encontrados pacotes com os critérios estabelecidos.')
             return
         
         print('Hospedagens:')
 
-                
-        System.out.println("Hospedagens:");
+        hospedagens = response_json['hospedagens']
+        passagens = response_json['passagens']
 
-        for (Hospedagem h : pacote.getHospedagens()) {
-            int entryDate = ch.getEntryDate();
-            int leaveDate = ch.getLeaveDate();
-            int minimumSpots = h.availableDates.get(entryDate);
+        for h in hospedagens:
+            h = Hospedagem.from_server_json(h)
+            entry_date = consulta_hospedagem.entry_date
+            leave_date = consulta_hospedagem.leave_date
+            min_spots = h.available_dates[entry_date]
 
-            for (int date = entryDate + 1; date <= leaveDate; date++) {
-                int spotsOnDate = h.availableDates.get(date);
-                if (spotsOnDate < minimumSpots)
-                    minimumSpots = spotsOnDate;
-            }
+            for date in range(entry_date + 1, leave_date + 1):
+                spots_on_date = h.available_dates[date]
+                if spots_on_date < min_spots:
+                    min_spots = spots_on_date
 
-            System.out.printf("Preco da diaria: %s\nDisponiveis: %d\n", h.getPrice(), minimumSpots);
-        }
+            print('Preco da diaria: {}\nDisponiveis: {}\n'.format(h.price, min_spots))
 
-        System.out.println("------------------------------------------");
+        print('------------------------------------------')
 
-        System.out.println("Passagens de ida:");
+        print('Passagens de ida:')
 
-        for (Passagem p : pacote.getPassagens().get("Ida")) {
-            System.out.printf("Preco da passagem: %s\nDisponiveis: %d\n", p.getPrice(), p.getAvailableSpots());
-        }
+        for p in passagens['Ida']:
+            p = Passagem.from_server_json(p)
+            print('Preco da passagem: {}\nDisponiveis: {}\n'.format(p.price, p.n_spots_left))
 
-        if (!cp.isOneWay()) {
+        if not consulta_passagem.is_one_way:
 
-            System.out.println("Passagens de volta:");
+            print('Passagens de volta:')
 
-            for (Passagem p : pacote.getPassagens().get("Volta")) {
-                System.out.printf("Preco da passagem: %s\nDisponiveis: %d\n", p.getPrice(), p.getAvailableSpots());
-            }
-        }
+            for p in passagens['Volta']:
+                p = Passagem.from_server_json(p)
+                print('Preco da passagem: {}\nDisponiveis: {}\n'.format(p.price, p.n_spots_left))
 
+    def verify_response(self, response):
 
+        if response.status_code != 200:
+            print('Servidor nao respondeu OK')
+            return False
 
-
-
+        return True
