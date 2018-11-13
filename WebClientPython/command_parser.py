@@ -14,7 +14,7 @@ class CommandParser:
         'content-type': 'application/json'
     }
 
-    server_url = 'http://localhost:8080/service/'
+    server_url = 'http://localhost:8080/Server/'
 
     def parse_command(self, command):
         if command.lower() == 'consulta h':
@@ -46,9 +46,10 @@ class CommandParser:
         consulta_hospedagem.price = price
 
         # TODO Finish request.
-        response = requests.get(
-            self.server_url + 'compra/hospedagem',
-            headers=self.headers
+        response = requests.post(
+            self.server_url + 'compra/hospedagens',
+            headers=self.headers,
+            json=consulta_hospedagem
         )
 
         if not self.verify_response(response):
@@ -70,9 +71,10 @@ class CommandParser:
         consulta_passagem.price = price
 
         # TODO Finish request.
-        response = requests.get(
-            self.server_url + 'compra/passagem',
-            headers=self.headers
+        response = requests.post(
+            self.server_url + 'compra/passagens',
+            headers=self.headers,
+            json=consulta_passagem
         )
 
         if not self.verify_response(response):
@@ -100,17 +102,23 @@ class CommandParser:
         price = input('Preco da passagem: ')
         consulta_passagem.price = price
 
+        consulta_pacote = {
+            'consultaPassagem': consulta_passagem,
+            'consultaHospedagem': consulta_hospedagem
+        }       
+
         # TODO Finish request.
-        response = requests.get(
-            self.server_url + 'compra/pacote',
-            headers=self.headers
+        response = requests.post(
+            self.server_url + 'compra/pacotes',
+            headers=self.headers,
+            json=consulta_pacote
         )
 
         if not self.verify_response(response):
             return
 
         try:
-            hospedagem = response.json()
+            pacote = response.json()
         except ValueError:
             print('Nao foi possivel realizar a compra')
             return
@@ -120,9 +128,10 @@ class CommandParser:
     def handle_consulta_hospedagem(self, consulta_hospedagem):
 
         # TODO Finish request.
-        response = requests.get(
-            self.server_url + 'consulta/hospedagem',
-            headers=self.headers
+        response = requests.post(
+            self.server_url + 'consulta/hospedagens',
+            headers=self.headers,
+            json=consulta_hospedagem
         )
 
         if not self.verify_response(response):
@@ -174,10 +183,12 @@ class CommandParser:
         return consulta_hospedagem
 
     def handle_consulta_passagem(self, consulta_passagem):
-        # TODO Finish request.
-        response = requests.get(
-            self.server_url + 'consulta/passagem',
-            headers=self.headers
+
+        # TODO Finish request.        
+        response = requests.post(
+            self.server_url + 'consulta/passagens',
+            headers=self.headers,
+            json=consulta_passagem
         )
 
         if not self.verify_response(response):
@@ -270,9 +281,16 @@ class CommandParser:
             return
 
         # TODO Finish request.
-        response = requests.get(
-            self.server_url + 'consulta/pacote',
-            headers=self.headers
+        consulta_pacote = {
+            'consultaPassagem': consulta_passagem,
+            'consultaHospedagem': consulta_hospedagem
+        }       
+
+        # TODO Finish request.
+        response = requests.post(
+            self.server_url + 'consulta/pacotes',
+            headers=self.headers,
+            json=consulta_pacote
         )
 
         if not self.verify_response(response):
@@ -325,3 +343,4 @@ class CommandParser:
             return False
 
         return True
+
