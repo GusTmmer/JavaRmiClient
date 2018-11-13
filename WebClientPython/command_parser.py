@@ -14,7 +14,7 @@ class CommandParser:
         'content-type': 'application/json'
     }
 
-    server_url = 'http://localhost:8080/Server/'
+    server_url = 'http://localhost:8084/WebApplication/webresources/Server/'
 
     def parse_command(self, command):
         if command.lower() == 'consulta h':
@@ -62,6 +62,9 @@ class CommandParser:
         except ValueError:
             print('Nao foi possivel realizar a compra')
             return
+    
+        if not hospedagem:
+            print('Nao foi possivel realizar a compra')
 
         print('Compra realizada com sucesso.')
 
@@ -89,6 +92,9 @@ class CommandParser:
         except ValueError:
             print('Nao foi possivel realizar a compra')
             return
+
+        if not passagem:
+            print('Nao foi possivel realizar a compra')
 
         print('Compra realizada com sucesso.')
 
@@ -130,6 +136,9 @@ class CommandParser:
             print('Nao foi possivel realizar a compra')
             return
 
+        if not pacote:
+            print('Nao foi possivel realizar a compra')
+
         print('Compra realizada com sucesso.')
 
     def handle_consulta_hospedagem(self, consulta_hospedagem):
@@ -149,6 +158,9 @@ class CommandParser:
         except ValueError:
             print('Nao foram encontradas hospedagens com os critérios estabelecidos.')
             return
+
+        if not hospedagens:
+            print('Nao foram encontradas hospedagens com os critérios estabelecidos.')
 
         print('Resultados encontrados:')
 
@@ -206,6 +218,9 @@ class CommandParser:
         except ValueError:
             print('Nao foram encontradas passagens com os critérios estabelecidos.')
             return
+
+        if not passagens:
+            print('Nao foram encontradas passagens com os critérios estabelecidos.')
 
         print('Resultados encontrados:')
 
@@ -311,6 +326,9 @@ class CommandParser:
         except ValueError:
             print('Nao foram encontrados pacotes com os critérios estabelecidos.')
             return
+    
+        if not response_json:
+            print('Nao foram encontrados pacotes com os critérios estabelecidos.')
         
         print('Hospedagens:')
 

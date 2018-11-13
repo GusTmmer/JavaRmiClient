@@ -10,10 +10,7 @@ def main():
           "Compras:\n" + \
           "\tcompra h (hospedagem)\n" + \
           "\tcompra p (passagem)\n" + \
-          "\tcompra pc (pacote)\n" + \
-          "Eventos:\n" + \
-          "\tregistra evento\n" + \
-          "\tremove evento\n"
+          "\tcompra pc (pacote)\n"
     )
 
     parser = CommandParser()
