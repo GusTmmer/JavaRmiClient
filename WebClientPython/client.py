@@ -18,19 +18,12 @@ def main():
 
     parser = CommandParser()
 
-    while(True): {
+    while True:
 
         client_command = input()
         parser.parse_command(client_command)
-    }
+
 
 
 if __name__ == '__main__':
     main()
-
-
-    import requests
-    
-    headers = {
-        'type': 'application/json'
-    }

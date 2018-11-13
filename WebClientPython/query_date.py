@@ -17,17 +17,6 @@ class QueryDate:
         for m in range(self.month):
             self.repr_day += self.days_in_a_month[m]
 
-    def __init__(self, day: int, month: int, year: int):
-
-        self.day = day
-        self.month = month
-        self.year = year
-
-        self.repr_day = self.day + self.year * 365
-
-        for m in range(self.month):
-            self.repr_day += self.days_in_a_month[m]
-
         
 
         
