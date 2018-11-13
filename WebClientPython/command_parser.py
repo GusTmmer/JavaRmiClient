@@ -45,11 +45,13 @@ class CommandParser:
         price = input('Preco da hospedagem: ')
         consulta_hospedagem.price = price
 
+        consulta_json = consulta_hospedagem.to_json_dict()
+
         # TODO Finish request.
         response = requests.post(
             self.server_url + 'compra/hospedagens',
             headers=self.headers,
-            json=consulta_hospedagem
+            json=consulta_json
         )
 
         if not self.verify_response(response):
@@ -70,11 +72,13 @@ class CommandParser:
         price = input('Preco da passagem: ')
         consulta_passagem.price = price
 
+        consulta_json = consulta_passagem.to_json_dict()
+
         # TODO Finish request.
         response = requests.post(
             self.server_url + 'compra/passagens',
             headers=self.headers,
-            json=consulta_passagem
+            json=consulta_json
         )
 
         if not self.verify_response(response):
@@ -102,10 +106,13 @@ class CommandParser:
         price = input('Preco da passagem: ')
         consulta_passagem.price = price
 
+        consulta_hospedagem_json = consulta_hospedagem.to_json_dict()
+        consulta_passagem_json = consulta_passagem.to_json_dict()
+
         consulta_pacote = {
-            'consultaPassagem': consulta_passagem,
-            'consultaHospedagem': consulta_hospedagem
-        }       
+            'consultaPassagem': consulta_passagem_json,
+            'consultaHospedagem': consulta_hospedagem_json
+        }
 
         # TODO Finish request.
         response = requests.post(
@@ -131,7 +138,7 @@ class CommandParser:
         response = requests.post(
             self.server_url + 'consulta/hospedagens',
             headers=self.headers,
-            json=consulta_hospedagem
+            json=consulta_hospedagem.to_json_dict()
         )
 
         if not self.verify_response(response):
@@ -188,7 +195,7 @@ class CommandParser:
         response = requests.post(
             self.server_url + 'consulta/passagens',
             headers=self.headers,
-            json=consulta_passagem
+            json=consulta_passagem.to_json_dict()
         )
 
         if not self.verify_response(response):
@@ -280,10 +287,13 @@ class CommandParser:
         if consulta_hospedagem is None or consulta_passagem is None:
             return
 
-        # TODO Finish request.
+        
+        consulta_hospedagem_json = consulta_hospedagem.to_json_dict()
+        consulta_passagem_json = consulta_passagem.to_json_dict()
+
         consulta_pacote = {
-            'consultaPassagem': consulta_passagem,
-            'consultaHospedagem': consulta_hospedagem
+            'consultaPassagem': consulta_passagem_json,
+            'consultaHospedagem': consulta_hospedagem_json
         }       
 
         # TODO Finish request.
