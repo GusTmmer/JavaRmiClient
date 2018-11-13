@@ -39,6 +39,13 @@ class CommandParser:
             print('Comando nao suportado')
 
     def nova_compra_hospedagem(self):
+        """
+        Runs a package query and modifies the data in the server.
+        Asks the user for the details to build a lodging query.
+        Serializes these queries with JSON.
+        Forwards this final JSON string to the server.
+        Prints if the process finished OK.
+        """
 
         consulta_hospedagem = self.nova_consulta_hospedagem()
 
@@ -99,6 +106,13 @@ class CommandParser:
         print('Compra realizada com sucesso.')
 
     def nova_compra_pacote(self):
+        """
+        Runs a package query and modifies the data in the server.
+        Asks the user for the details to build a lodging and plane ticket query.
+        Serializes these queries with JSON.
+        Forwards this final JSON string to the server, and gets results.
+        Prints the query results.
+        """
 
         print('Detalhes da Hospedagem:')
         consulta_hospedagem = self.nova_consulta_hospedagem()
@@ -142,6 +156,14 @@ class CommandParser:
         print('Compra realizada com sucesso.')
 
     def handle_consulta_hospedagem(self, consulta_hospedagem):
+        """
+        Runs a lodging query in the server.
+        Gets a query inputted by the user.
+        Serializes the query with JSON.
+        Forwards this final JSON string to the server, and gets results.
+        Prints the query results.
+        """   
+
 
         # TODO Finish request.
         response = requests.post(
@@ -178,6 +200,10 @@ class CommandParser:
             print('Preco da diaria: {}\nDisponiveis: {}\n'.format(h.price, min_spots))
 
     def nova_consulta_hospedagem(self):
+        """
+        Asks the user for the details to build a lodging query.
+        Returns a query ready to be sent to the server.
+        """
         
         if self.prev_consulta_hospedagem is not None:
             repetir_consulta = input('Repetir ultima consulta (y/n)? ')
@@ -202,6 +228,14 @@ class CommandParser:
         return consulta_hospedagem
 
     def handle_consulta_passagem(self, consulta_passagem):
+        """
+        Runs a plane ticket query in the server.
+        Gets a query inputted by the user.
+        Serializes the query with JSON.
+        Forwards this final JSON string to the server, and gets results.
+        Prints the query results.
+        """        
+    
 
         # TODO Finish request.        
         response = requests.post(
@@ -239,6 +273,11 @@ class CommandParser:
                 print('Preco da passagem: {}\nDisponiveis: {}\n'.format(p.price, p.n_spots_left))
 
     def nova_consulta_passagem(self):
+        """
+        Asks the user for the details to build a plane ticket query.
+        Returns a query ready to be sent to the server.
+        """
+
 
         if self.prev_consulta_passagem is not None:
             repetir_consulta = input('Repetir ultima consulta (y/n)? ')
@@ -282,6 +321,13 @@ class CommandParser:
         return consulta_passagem
 
     def nova_consulta_pacote(self):
+        """
+        Runs a package query in the server.
+        Asks the user for the details to build a lodging and plane ticket query.
+        Serializes these queries with JSON.
+        Forwards this final JSON string to the server, and gets results.
+        Prints the query results.
+        """
 
         consulta_hospedagem = None
         consulta_passagem = None
@@ -365,6 +411,10 @@ class CommandParser:
                 print('Preco da passagem: {}\nDisponiveis: {}\n'.format(p.price, p.n_spots_left))
 
     def verify_response(self, response):
+        """
+        Verifies if response's status code is 200 and returns a boolean.
+        True if response is OK. False otherwise.
+        """
 
         if response.status_code != 200:
             print('Servidor nao respondeu OK')
