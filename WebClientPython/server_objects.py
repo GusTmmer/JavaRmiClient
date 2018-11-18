@@ -7,6 +7,15 @@ class Hospedagem:
         self.price = price
         self.available_dates = available_dates
 
+    def to_json_dict(self):
+        json_dict = {
+            'location': self.location,
+            'price': self.price,
+            'availableDates': self.available_dates
+        }
+
+        return json_dict
+
     @staticmethod
     def from_server_json(json_response):
 
@@ -25,6 +34,17 @@ class Passagem:
         self.date = date
         self.n_spots_left = n_spots_left
         self.price = price
+
+    def to_json_dict(self):
+        json_dict = {
+            'origin': self.origin,
+            'destination': self.destination,
+            'date': self.date,
+            'nSpotsLeft': self.n_spots_left,
+            'price': self.price
+        }
+
+        return json_dict
 
     @staticmethod
     def from_server_json(json_response):

@@ -54,7 +54,6 @@ class CommandParser:
 
         consulta_json = consulta_hospedagem.to_json_dict()
 
-        # TODO Finish request.
         response = requests.post(
             self.server_url + 'compra/hospedagens',
             headers=self.headers,
@@ -76,6 +75,13 @@ class CommandParser:
         print('Compra realizada com sucesso.')
 
     def nova_compra_passagem(self):
+        """
+        Runs a package query and modifies the data in the server.
+        Asks the user for the details to build a ticket query.
+        Serializes these queries with JSON.
+        Forwards this final JSON string to the server.
+        Prints if the process finished OK.
+        """
 
         consulta_passagem = self.nova_consulta_passagem()
 
@@ -84,7 +90,6 @@ class CommandParser:
 
         consulta_json = consulta_passagem.to_json_dict()
 
-        # TODO Finish request.
         response = requests.post(
             self.server_url + 'compra/passagens',
             headers=self.headers,
@@ -102,6 +107,7 @@ class CommandParser:
 
         if not passagem:
             print('Nao foi possivel realizar a compra')
+            return
 
         print('Compra realizada com sucesso.')
 
@@ -134,7 +140,6 @@ class CommandParser:
             'consultaHospedagem': consulta_hospedagem_json
         }
 
-        # TODO Finish request.
         response = requests.post(
             self.server_url + 'compra/pacotes',
             headers=self.headers,
@@ -152,6 +157,7 @@ class CommandParser:
 
         if not pacote:
             print('Nao foi possivel realizar a compra')
+            return
 
         print('Compra realizada com sucesso.')
 
@@ -164,8 +170,6 @@ class CommandParser:
         Prints the query results.
         """   
 
-
-        # TODO Finish request.
         response = requests.post(
             self.server_url + 'consulta/hospedagens',
             headers=self.headers,
@@ -183,6 +187,7 @@ class CommandParser:
 
         if not hospedagens:
             print('Nao foram encontradas hospedagens com os critérios estabelecidos.')
+            return
 
         print('Resultados encontrados:')
 
@@ -190,10 +195,10 @@ class CommandParser:
             h = Hospedagem.from_server_json(h)
             entry_date = consulta_hospedagem.entry_date
             leave_date = consulta_hospedagem.leave_date
-            min_spots = h.available_dates[entry_date]
+            min_spots = h.available_dates[str(entry_date)]
 
             for date in range(entry_date + 1, leave_date + 1):
-                spots_on_date = h.available_dates[date]
+                spots_on_date = h.available_dates[str(date)]
                 if spots_on_date < min_spots:
                     min_spots = spots_on_date
 
@@ -235,9 +240,7 @@ class CommandParser:
         Forwards this final JSON string to the server, and gets results.
         Prints the query results.
         """        
-    
 
-        # TODO Finish request.        
         response = requests.post(
             self.server_url + 'consulta/passagens',
             headers=self.headers,
@@ -255,6 +258,7 @@ class CommandParser:
 
         if not passagens:
             print('Nao foram encontradas passagens com os critérios estabelecidos.')
+            return
 
         print('Resultados encontrados:')
 
@@ -357,7 +361,6 @@ class CommandParser:
             'consultaHospedagem': consulta_hospedagem_json
         }       
 
-        # TODO Finish request.
         response = requests.post(
             self.server_url + 'consulta/pacotes',
             headers=self.headers,
@@ -375,6 +378,7 @@ class CommandParser:
     
         if not response_json:
             print('Nao foram encontrados pacotes com os critérios estabelecidos.')
+            return
         
         print('Hospedagens:')
 
@@ -385,10 +389,10 @@ class CommandParser:
             h = Hospedagem.from_server_json(h)
             entry_date = consulta_hospedagem.entry_date
             leave_date = consulta_hospedagem.leave_date
-            min_spots = h.available_dates[entry_date]
+            min_spots = h.available_dates[str(entry_date)]
 
             for date in range(entry_date + 1, leave_date + 1):
-                spots_on_date = h.available_dates[date]
+                spots_on_date = h.available_dates[str(date)]
                 if spots_on_date < min_spots:
                     min_spots = spots_on_date
 
